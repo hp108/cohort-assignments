@@ -18,6 +18,37 @@ const path = require('path');
 const app = express();
 
 
+app.get("/file",(req,res)=>{ 
+  fs.readdir('./files', (err, files) => {
+    if (err) {
+      console.error('Unable to scan directory: ' + err);
+      res.json({message:"Directory not found"})
+    } 
+    const l = []
+    files.forEach(file => {
+      l.push(file)
+    });
+    res.json({message:l})
+  });
+})
+
+app.get('/file/:filename',async(req,res)=>{
+  const filename= req.params.filename;
+  console.log(filename)
+  let data = null
+  fs.readFile('./files/'+filename,'utf-8',(err,ans)=>{
+    if(err){
+      console.log(err)
+    }
+    data= ans
+    res.json({message:data})
+  })
+})
+
+
+app.listen(3000,()=>{
+  console.log('Listening')
+})
 
 
 module.exports = app;
