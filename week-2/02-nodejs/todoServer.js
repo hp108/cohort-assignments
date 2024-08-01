@@ -40,10 +40,38 @@
   Testing the server - run `npm run test-todoServer` command in terminal
  */
   const express = require('express');
+  const fs = require('fs')
+  const path = require('path')
   const bodyParser = require('body-parser');
   
   const app = express();
   
   app.use(bodyParser.json());
+
+  app.get("/todos",(req,res)=>{
+      console.log("Hitted")
+      fs.readFile(path.join(__dirname,'./todos.json'),'utf-8',(err,data)=>{
+        const ans = JSON.parse(data)
+        res.json(ans)
+      })
+  })
+
+  app.post('/todos',(req,res)=>{
+    const data = req.body;
+    const id = Math.random()*100000
+    data.id = id;
+    console.log(data)
+    fs.writeFile(path.join(__dirname,'./todos.json',data),(err,result)=>{
+      console.log(data)
+      res.json("Created sucessfully")
+    })
+  })
+
+
+  app.use("*",(req,res)=>{
+    res.json({message:"No Route Found"})
+  })
+
+  app.listen(3000)
   
   module.exports = app;
